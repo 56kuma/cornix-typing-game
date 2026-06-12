@@ -1,0 +1,16 @@
+name = "cornix-typing-game"
+main = "src/worker.js"
+compatibility_date = "2026-05-01"
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
+# ランキング用 D1。デプロイ前に以下を実行して database_id を差し替えること:
+#   npx wrangler d1 create cornix-typing
+#   npx wrangler d1 execute cornix-typing --remote --file=./schema.sql
+# D1 を使わない場合はこのセクションを丸ごと削除(ランキングはブラウザローカル保存になる)
+[[d1_databases]]
+binding = "DB"
+database_name = "cornix-typing"
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"

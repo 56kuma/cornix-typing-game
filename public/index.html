@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CORNIX TYPER // 60s NEON PROTOCOL</title>
+<meta name="description" content="分割キーボードCornixのための近未来SFタイピングゲーム">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="fx"></canvas>
+<div id="scanlines"></div>
+
+<div id="app">
+  <!-- ===== HUD ===== -->
+  <header id="hud" class="hidden">
+    <div class="hud-box">
+      <span class="hud-label">SCORE</span>
+      <span id="score" class="hud-value">0</span>
+    </div>
+    <div id="timer-wrap">
+      <div id="timer-bar"></div>
+      <span id="time-num">60.0</span>
+    </div>
+    <div class="hud-box right">
+      <span class="hud-label">COMBO</span>
+      <span id="combo" class="hud-value">0</span>
+      <span id="mult" class="mult-badge">×1</span>
+    </div>
+  </header>
+
+  <!-- ===== STAGE ===== -->
+  <main id="stage">
+
+    <section id="screen-title" class="screen">
+      <h1 class="logo"><span class="logo-cornix">CORNIX</span> <span class="logo-typer">TYPER</span></h1>
+      <p class="tagline">// 60s NEON PROTOCOL — 制限時間60秒、撃ち落とせ</p>
+      <div id="mode-row">
+        <button class="mode-btn" data-mode="en">ENGLISH<small>SF英単語</small></button>
+        <button class="mode-btn" data-mode="jp">日本語<small>SF用語をローマ字で</small></button>
+      </div>
+      <button id="btn-start" class="btn-main">▶ START&nbsp;&nbsp;<kbd>Enter</kbd></button>
+      <div class="title-info">
+        <p>正確タイプで <b>COMBO</b> を繋げ — 倍率 ×2 ×3 ×4 でスコア加速</p>
+        <p><span class="gold-text">★ GOLD WORD</span> 出現時は得点3倍。ミスタイプはコンボ消滅 &amp; 減点</p>
+      </div>
+      <div id="title-ranking" class="ranking-panel">
+        <h2 class="rank-title">⟨ GLOBAL RANKING ⟩ <span id="ranking-mode-tag"></span></h2>
+        <ol id="ranking-list-title" class="ranking-list"><li class="rk-loading">ACCESSING DATABASE…</li></ol>
+      </div>
+    </section>
+
+    <section id="screen-count" class="screen hidden">
+      <div id="count-num">3</div>
+    </section>
+
+    <section id="screen-game" class="screen hidden">
+      <div id="gold-tag" class="hidden">★ GOLD WORD — SCORE ×3 ★</div>
+      <div id="word-jp"></div>
+      <div id="word"></div>
+      <div id="next-word">NEXT&nbsp;▸&nbsp;<span id="next-word-text"></span></div>
+      <div id="fever-tag" class="hidden">⚡ FEVER ⚡</div>
+    </section>
+
+    <section id="screen-result" class="screen hidden">
+      <h2 id="timeup">TIME UP</h2>
+      <div id="result-panel">
+        <div id="result-rank-wrap">
+          <div id="result-rank">?</div>
+          <div id="result-rank-name"></div>
+        </div>
+        <div id="result-main">
+          <div class="result-score-row">
+            <span class="hud-label">FINAL SCORE</span>
+            <span id="result-score">0</span>
+          </div>
+          <p id="result-record" class="hidden">🏆 NEW RECORD!</p>
+          <p id="result-next-rank"></p>
+          <ul id="result-stats">
+            <li><span>WORDS</span><b id="st-words">0</b></li>
+            <li><span>KPM</span><b id="st-kpm">0</b></li>
+            <li><span>ACCURACY</span><b id="st-acc">0%</b></li>
+            <li><span>MAX COMBO</span><b id="st-maxcombo">0</b></li>
+            <li><span>MISS</span><b id="st-miss">0</b></li>
+          </ul>
+          <div id="miss-keys" class="hidden">
+            <span class="hud-label">苦手キー TOP5</span>
+            <div id="miss-key-list"></div>
+          </div>
+          <div id="submit-row">
+            <input id="name-input" maxlength="12" placeholder="YOUR NAME" autocomplete="off" spellcheck="false">
+            <button id="btn-submit" class="btn-sub">登録</button>
+          </div>
+          <div id="result-ranking" class="ranking-panel">
+            <h3 class="rank-title">⟨ RANKING ⟩ <span id="ranking-mode-tag2"></span></h3>
+            <ol id="ranking-list-result" class="ranking-list"></ol>
+          </div>
+          <div id="result-btn-row">
+            <button id="btn-retry" class="btn-main">↻ RETRY&nbsp;&nbsp;<kbd>Enter</kbd></button>
+            <button id="btn-title" class="btn-sub">⌂ TOP&nbsp;&nbsp;<kbd>Esc</kbd></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== CORNIX KEY GUIDE ===== -->
+  <footer id="kbd-wrap">
+    <div id="finger-hint">&nbsp;</div>
+    <div id="kbd"></div>
+  </footer>
+</div>
+
+<button id="mute" title="sound on/off">♪</button>
+<script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "cornix-typing-game",
+  "version": "1.0.0",
+  "private": true,
+  "description": "分割キーボードCornix用の近未来SFタイピングゲーム (Cloudflare Workers)",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:create": "wrangler d1 create cornix-typing",
+    "db:init": "wrangler d1 execute cornix-typing --remote --file=./schema.sql",
+    "db:init:local": "wrangler d1 execute cornix-typing --local --file=./schema.sql"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}
