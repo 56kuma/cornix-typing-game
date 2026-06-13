@@ -13,4 +13,4 @@ binding = "ASSETS"
 [[d1_databases]]
 binding = "DB"
 database_name = "cornix-typing"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "0cf5e917-6656-4dd9-9c9c-ac1fc5144585"
