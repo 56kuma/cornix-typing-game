@@ -405,10 +405,15 @@ body.missflash::after {
 #finger-hint b { color: var(--cyan); text-shadow: 0 0 10px rgba(0,240,255,.7); }
 
 #kbd { display: flex; gap: 58px; align-items: flex-start; }
-.kbd-half { position: relative; display: flex; gap: 5px; }
+.kbd-half { position: relative; display: flex; flex-direction: column; gap: 5px; }
+.kbd-cols { display: flex; gap: 5px; }
 .kbd-col { display: flex; flex-direction: column; gap: 5px; }
+.kbd-bottom { display: flex; gap: 5px; }
+.kbd-half.left  .kbd-bottom { justify-content: flex-start; }
+.kbd-half.right .kbd-bottom { justify-content: flex-end; }
 
 .key {
+  position: relative;
   width: 44px; height: 44px;
   display: grid; place-items: center;
   border: 1px solid rgba(0, 240, 255, .28);
@@ -421,6 +426,20 @@ body.missflash::after {
 }
 .key.mod { font-size: 9px; letter-spacing: .05em; color: #44517c; }
 .key.thumb { border-radius: 10px; }
+.key.blank { color: transparent; }
+
+/* キー右上の数字・記号オーバーレイ */
+.key .sub {
+  position: absolute; top: 3px; right: 5px;
+  font-size: 9px; line-height: 1; color: #ff7a3c;
+  text-shadow: 0 0 5px rgba(255, 122, 60, .6);
+}
+
+/* 橙 / 緑 のドットキー */
+.key.dotkey { place-items: center; }
+.key .dot { width: 15px; height: 15px; border-radius: 50%; }
+.dot-orange { background: #ff5a1f; box-shadow: 0 0 9px rgba(255, 90, 31, .9); }
+.dot-green  { background: #2ec16a; box-shadow: 0 0 9px rgba(46, 193, 106, .9); }
 
 .kbd-thumbs { position: absolute; bottom: -52px; display: flex; gap: 5px; }
 .kbd-half.left  .kbd-thumbs { right: 0; }

@@ -335,11 +335,11 @@ const GOLD_RATE = 0.12;
 const GOLD_MULT = 3;
 const multOf = c => (c >= 50 ? 4 : c >= 25 ? 3 : c >= 10 ? 2 : 1);
 
-/* ---------- Cornix layout (3x6 + 3 thumbs per half) ---------- */
+/* ---------- Cornix layout (実機写真に準拠) ---------- */
 const LAYOUT = {
   left: {
     cols: [
-      ['Tab', 'Ctl', 'Sft'],
+      ['Tab', 'Caps', 'Shift'],
       ['q', 'a', 'z'],
       ['w', 's', 'x'],
       ['e', 'd', 'c'],
@@ -347,7 +347,8 @@ const LAYOUT = {
       ['t', 'g', 'b'],
     ],
     offsets: [14, 14, 5, 0, 7, 10],
-    thumbs: ['Gui', 'Lwr', ' '],          // ' ' = space key
+    bottom: ['Ctrl', 'Win', 'Alt'],
+    thumbs: ['dot-o', 'Lower', 'blank'],
   },
   right: {
     cols: [
@@ -356,11 +357,19 @@ const LAYOUT = {
       ['i', 'k', ','],
       ['o', 'l', '.'],
       ['p', ';', '/'],
-      ['Bsp', "'", 'Sft'],
+      ['Back', 'Enter', '↑'],
     ],
     offsets: [10, 7, 0, 5, 14, 14],
-    thumbs: ['Ent', 'Rse', 'Alt'],
+    bottom: ['←', '↓', '→'],
+    thumbs: ['blank', 'Raise', 'dot-g'],
   },
+};
+// キー右上の小さな第2ラベル(数字・記号オーバーレイ / 実機のオレンジ刻印)
+const SUB = {
+  q: '1', w: '2', e: '3', r: '4', t: '5',
+  y: '6', u: '7', i: '8', o: '9', p: '0',
+  f: ':', g: '-', h: '+', j: '*',
+  ',': '<', '.': '>', '/': '?',
 };
 // 列→指 (左手は外側→内側、右手は内側→外側の並びなので別定義)
 const FINGER = {
@@ -375,25 +384,58 @@ function buildKeyboard() {
   for (const hand of ['left', 'right']) {
     const half = document.createElement('div');
     half.className = `kbd-half ${hand}`;
+
+    const colsWrap = document.createElement('div');
+    colsWrap.className = 'kbd-cols';
     LAYOUT[hand].cols.forEach((col, ci) => {
       const colEl = document.createElement('div');
       colEl.className = 'kbd-col';
       colEl.style.marginTop = LAYOUT[hand].offsets[ci] + 'px';
       col.forEach(k => colEl.appendChild(makeKey(k, hand, ci, false)));
-      half.appendChild(colEl);
+      colsWrap.appendChild(colEl);
     });
+    half.appendChild(colsWrap);
+
+    if (LAYOUT[hand].bottom) {
+      const row = document.createElement('div');
+      row.className = 'kbd-bottom';
+      LAYOUT[hand].bottom.forEach(k => row.appendChild(makeKey(k, hand, -1, false)));
+      half.appendChild(row);
+    }
+
     const thumbs = document.createElement('div');
     thumbs.className = 'kbd-thumbs';
     LAYOUT[hand].thumbs.forEach(k => thumbs.appendChild(makeKey(k, hand, -1, true)));
     half.appendChild(thumbs);
+
     kbd.appendChild(half);
   }
 }
 function makeKey(k, hand, ci, isThumb) {
   const el = document.createElement('div');
-  const isChar = k.length === 1;
-  el.className = 'key' + (isChar ? '' : ' mod') + (isThumb ? ' thumb' : '');
-  el.textContent = k === ' ' ? 'Spc' : k;
+  const thumbCls = isThumb ? ' thumb' : '';
+
+  if (k === 'blank') {            // 無刻印キー
+    el.className = 'key mod blank' + thumbCls;
+    return el;
+  }
+  if (k === 'dot-o' || k === 'dot-g') {  // 橙 / 緑 のドットキー
+    el.className = 'key mod dotkey' + thumbCls;
+    const dot = document.createElement('span');
+    dot.className = 'dot ' + (k === 'dot-o' ? 'dot-orange' : 'dot-green');
+    el.appendChild(dot);
+    return el;
+  }
+
+  const isChar = /^[a-z;,.\/']$/.test(k);
+  el.className = 'key' + (isChar ? '' : ' mod') + thumbCls;
+  el.textContent = k;
+  if (SUB[k]) {
+    const sub = document.createElement('span');
+    sub.className = 'sub';
+    sub.textContent = SUB[k];
+    el.appendChild(sub);
+  }
   if (isChar) {
     keyEls[k] = {
       el, hand,
