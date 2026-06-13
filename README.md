@@ -32,11 +32,13 @@ D1なしでも動作(ランキングはlocalStorageに保存・`[LOCAL MODE]`表
 ## デプロイ
 
 ```sh
-npx wrangler login
-npx wrangler d1 create cornix-typing   # database_id を wrangler.toml に貼る
-npm run db:init
-npm run deploy
+npx wrangler login                     # Cloudflareアカウントに認証（初回のみ）
+# npx wrangler d1 create cornix-typing   # DB未作成の場合のみ。database_id を wrangler.toml に貼る
+npm run db:init                        # 本番D1にテーブルを作成（IF NOT EXISTS なので冪等）
+npm run deploy                         # Cloudflare Workers にデプロイ
 ```
+
+> `wrangler.toml` に `database_id` が入っていれば `d1 create` は不要。
 
 ## 構成 / API
 
@@ -48,3 +50,32 @@ schema.sql · wrangler.toml
 
 - `GET /api/ranking?mode=en|jp` → モード別 上位20件
 - `POST /api/ranking` `{name,score,words,miss,mode}` → `{ok,rank}`
+
+## Cloudflare 構成図
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                   Cloudflare Edge                        │
+│                                                          │
+│  ブラウザ ──HTTP──▶ Workers (src/worker.js)              │
+│                         │                               │
+│          ┌──────────────┴──────────────┐                │
+│          │ /api/ranking ?               │ それ以外        │
+│          ▼                             ▼                │
+│   D1 Database (DB binding)     ASSETS binding           │
+│   ┌─────────────────────┐      ┌──────────────────┐     │
+│   │ scores テーブル      │      │ public/          │     │
+│   │  id, name, score    │      │  index.html      │     │
+│   │  words, miss, mode  │      │  style.css       │     │
+│   │  created_at         │      │  game.js         │     │
+│   └─────────────────────┘      └──────────────────┘     │
+│                                                          │
+└─────────────────────────────────────────────────────────┘
+
+GET  /api/ranking?mode=en|jp  → scores を score DESC で上位20件取得
+POST /api/ranking             → scores に INSERT → 自分の順位を返す
+それ以外                       → ASSETS から静的ファイルを配信
+
+D1 未バインド時: /api/ranking は 503 を返し、
+                ゲーム側は localStorage にフォールバック ([LOCAL MODE])
+```
